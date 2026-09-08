@@ -2,7 +2,7 @@ name: OptikLink KeepAlive
 
 on:
   schedule:
-    - cron: '0 12 */2 * *'   # каждые 2 дня в 12:00 UTC
+    - cron: '0 12 * * *'   # каждый день в 12:00 UTC
   workflow_dispatch:
 
 jobs:
