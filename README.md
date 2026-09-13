@@ -1,34 +1,38 @@
-# OptikLink KeepAlive
+# OptiKA — OptikLink KeepAlive
 
-### Назначение проекта
+**Language:** English | [Русский](README_RU.md)
 
-Небольшой Python-скрипт, запускаемый через GitHub Actions, который автоматизирует продление доступа к серверу на панели OptikLink (`control.optiklink.net`).
+Python script for GitHub Actions that keeps an OptikLink free server alive (`control.optiklink.net`).
 
-Скрипт с помощью Playwright:
+Using Playwright, the script:
 
-1. Восстанавливает сохранённую сессию браузера (или выполняет вход по логину/паролю панели при необходимости).
-2. Переходит на `optiklink.net/auth` и тем самым продлевает 3-дневный таймер сервера.
-3. Открывает страницу конкретного сервера и нажимает кнопку **START**, если сервер выключен.
+1. Restores a saved browser session (or logs in with panel credentials if needed)
+2. Visits `optiklink.net/auth` to refresh the 3-day activity timer
+3. Opens the server page and clicks **START** if the server is stopped
 
-Это автоматизация, чтобы бесплатный сервер не останавливался из-за отсутствия ручного захода на сайт более 3 дней.
+This prevents the free server from shutting down due to inactivity.
 
----
-
-### Структура репозитория
-
-- `generate_state.py` — локальный скрипт для создания сессии (один раз)
-- `autologin.py` — основной скрипт, который выполняется в GitHub Actions
-- `.github/workflows/keepalive.yml` — расписание и запуск
+Works with [Optiklink-VLESS](https://github.com/Diversan313/Optiklink-VLESS) or standalone.
 
 ---
 
-### Как пользоваться
+## Repository structure
 
-#### 1. Форк репозитория
+| File | Purpose |
+|------|---------|
+| `generate_state.py` | One-time local script to create a browser session |
+| `autologin.py` | Main script run by GitHub Actions |
+| `.github/workflows/keepalive.yml` | Schedule and workflow |
 
-Нажмите **Fork**.
+---
 
-#### 2. Создание сессии (выполняется один раз на своём компьютере)
+## Setup
+
+### 1. Fork the repository
+
+Click **Fork**.
+
+### 2. Create a session (once, on your machine)
 
 ```bash
 pip install playwright
@@ -37,34 +41,34 @@ playwright install chromium
 python generate_state.py
 ```
 
-Скрипт спросит, нужен ли прокси (если сайт недоступен напрямую).  
-После успешного входа в панель он выдаст длинную строку — это значение для секрета `STATE_JSON_BASE64`.
+The script may ask about a proxy if the site is blocked.  
+After a successful login it prints a long string — use it as the `STATE_JSON_BASE64` secret.
 
-#### 3. Настройка секретов
+### 3. Configure secrets
 
-Перейдите в **Settings → Secrets and variables → Actions** и добавьте:
+**Settings → Secrets and variables → Actions**:
 
-| Имя секрета           | Обязательный | Описание                                              |
-|-----------------------|--------------|-------------------------------------------------------|
-| `SERVER_ID`           | Да           | ID сервера (из URL `/server/XXXX`)                    |
-| `STATE_JSON_BASE64`   | Да           | Строка, полученная из `generate_state.py`             |
-| `PANEL_USER`          | Рекомендуется| Логин панели (используется, если сессия протухла)     |
-| `PANEL_PASSWORD`      | Рекомендуется| Пароль панели (используется, если сессия протухла)    |
-| `ENABLE_SCREENSHOTS`  | Нет          | `true` — сохранять скриншоты при ошибках              |
+| Secret | Required | Description |
+|--------|----------|-------------|
+| `SERVER_ID` | Yes | Server ID from URL `/server/XXXX` |
+| `STATE_JSON_BASE64` | Yes | String from `generate_state.py` |
+| `PANEL_USER` | Recommended | Panel login (if session expires) |
+| `PANEL_PASSWORD` | Recommended | Panel password (if session expires) |
+| `ENABLE_SCREENSHOTS` | No | `true` — save screenshots on errors |
 
-#### 4. Запуск
+### 4. Run
 
-- Автоматически каждые 2 дня (cron)
-- Вручную: вкладка **Actions** → **OptikLink KeepAlive** → **Run workflow**
+- Automatically every 2 days (cron)
+- Manually: **Actions** → **OptikLink KeepAlive** → **Run workflow**
 
 ---
 
-### Локальный запуск (для проверки)
+## Local test
 
 ```bash
-export SERVER_ID=ваш_id_сервера
-export STATE_JSON_BASE64=ваша_строка_из_generate_state
-# при необходимости:
+export SERVER_ID=your_server_id
+export STATE_JSON_BASE64=your_string_from_generate_state
+# optional:
 export PANEL_USER=...
 export PANEL_PASSWORD=...
 export ENABLE_SCREENSHOTS=true
@@ -74,8 +78,8 @@ python autologin.py
 
 ---
 
-### Важное замечание
+## Disclaimer
 
-Автоматизация входа и действий в панели управления может нарушать правила использования сервиса.  
-Используйте данный скрипт на свой страх и риск.
+Automating login and actions on a control panel may violate the service terms of use.  
+Use this script at your own risk.
 
