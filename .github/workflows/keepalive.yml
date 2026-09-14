@@ -2,7 +2,7 @@ name: OptikLink KeepAlive
 
 on:
   schedule:
-    - cron: '0 12 * * *'   # каждый день в 12:00 UTC
+    - cron: '0 12 * * *'   # every day at 12:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -33,7 +33,7 @@ jobs:
           ENABLE_SCREENSHOTS: ${{ secrets.ENABLE_SCREENSHOTS }}
         run: python autologin.py
 
-      - name: Upload screenshots (если включены)
+      - name: Upload screenshots (if enabled)
         if: always()
         uses: actions/upload-artifact@v4
         with:
