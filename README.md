@@ -58,7 +58,7 @@ After a successful login it prints a long string — use it as the `STATE_JSON_B
 
 ### 4. Run
 
-- Automatically every 2 days (cron)
+- Automatically **every day at 12:00 UTC** (cron)
 - Manually: **Actions** → **OptikLink KeepAlive** → **Run workflow**
 
 ---
@@ -82,4 +82,3 @@ python autologin.py
 
 Automating login and actions on a control panel may violate the service terms of use.  
 Use this script at your own risk.
-
