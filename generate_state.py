@@ -5,43 +5,43 @@ from pathlib import Path
 
 def main():
     print("=" * 60)
-    print("  Мастер создания сессии для панели OptikLink")
+    print("  OptikLink panel session setup")
     print("=" * 60)
     print()
-    print("Данный скрипт формирует файл состояния браузера (storage state),")
-    print("который в дальнейшем используется в GitHub Actions для")
-    print("автоматического продления доступа и запуска сервера.")
+    print("This script creates a browser storage state file")
+    print("that GitHub Actions later uses to keep the server")
+    print("alive and start it when needed.")
     print()
 
-    # --- Вопрос про прокси ---
+    # --- Proxy prompt ---
     use_proxy = input(
-        "Требуется ли использовать прокси? (если сайт недоступен напрямую). [y/N]: "
+        "Do you need a proxy? (if the site is not reachable directly). [y/N]: "
     ).strip().lower()
 
     proxy_config = None
     if use_proxy in ("y", "yes", "д", "да"):
         port = input(
-            "Укажите порт локального прокси-сервера (например, 10808 или 7890): "
+            "Enter local proxy port (e.g. 10808 or 7890): "
         ).strip()
         if not port.isdigit():
-            print("Ошибка: порт должен быть указан числом. Выполнение прервано.")
+            print("Error: port must be a number. Aborting.")
             return
 
         proxy_config = {"server": f"http://127.0.0.1:{port}"}
-        print(f"\nПрокси успешно настроен: http://127.0.0.1:{port}")
+        print(f"\nProxy configured: http://127.0.0.1:{port}")
     else:
-        print("\nПрокси использоваться не будет.")
+        print("\nNo proxy will be used.")
 
     print()
     print("-" * 60)
-    print("Порядок действий:")
-    print("1. Сейчас будет открыто окно браузера.")
-    print("2. Пройдите авторизацию на сайте control.optiklink.net.")
-    print("3. После успешного входа в панель управления вернитесь")
-    print("   в это окно терминала и нажмите Enter для продолжения.")
+    print("Steps:")
+    print("1. A browser window will open.")
+    print("2. Log in at control.optiklink.net.")
+    print("3. After a successful login, return to this terminal")
+    print("   and press Enter to continue.")
     print("-" * 60)
     print()
-    input("Нажмите Enter, чтобы открыть браузер...")
+    input("Press Enter to open the browser...")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
@@ -63,33 +63,33 @@ def main():
         try:
             page.goto("https://control.optiklink.net", timeout=60000)
         except Exception as e:
-            print(f"\nПредупреждение: страницу не удалось загрузить автоматически ({e}).")
-            print("Пожалуйста, обновите страницу вручную в открытом окне браузера.")
+            print(f"\nWarning: page could not be loaded automatically ({e}).")
+            print("Please refresh the page manually in the browser window.")
 
-        input("\n>>> После успешного входа в панель нажмите Enter... ")
+        input("\n>>> After a successful login, press Enter... ")
 
-        # Сохраняем состояние сессии
+        # Save session state
         context.storage_state(path="state.json")
         browser.close()
 
-    # Формируем строку в формате base64
+    # Build base64 string
     state_bytes = Path("state.json").read_bytes()
     b64 = base64.b64encode(state_bytes).decode("ascii")
 
     print()
     print("=" * 60)
-    print("  Сессия успешно сохранена")
+    print("  Session saved successfully")
     print("=" * 60)
     print()
-    print("Скопируйте приведённую ниже строку целиком и добавьте её")
-    print("в GitHub Secrets репозитория под именем:  STATE_JSON_BASE64")
+    print("Copy the string below in full and add it to")
+    print("GitHub Secrets as:  STATE_JSON_BASE64")
     print()
     print("-" * 60)
     print(b64)
     print("-" * 60)
     print()
-    print("Файл state.json также сохранён в текущей рабочей папке — на случай,")
-    print("если он понадобится повторно.")
+    print("state.json is also saved in the current folder")
+    print("in case you need it again.")
     print()
 
 
