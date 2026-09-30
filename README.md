@@ -58,7 +58,7 @@ After a successful login it prints a long string — use it as the `STATE_JSON_B
 
 ### 4. Run
 
-- Automatically **every day at 12:00 UTC** (cron)
+- Automatically **every 8 hours UTC** (cron)
 - Manually: **Actions** → **OptikLink KeepAlive** → **Run workflow**
 
 ---
