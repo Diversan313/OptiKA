@@ -58,7 +58,7 @@ python generate_state.py
 
 ### 4. Запуск
 
-- Автоматически **каждый день в 12:00 UTC** (cron)
+- Автоматически **каждые 8 часов UTC** (cron)
 - Вручную: **Actions** → **OptikLink KeepAlive** → **Run workflow**
 
 ---
